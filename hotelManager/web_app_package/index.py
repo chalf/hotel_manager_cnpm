@@ -1,6 +1,7 @@
 from flask import render_template
 
-from web_app_package import app
+from web_app_package import app, list_img
+from web_app_package.data_access_objects import get_kind_of_room
 
 
 @app.route('/')
@@ -10,7 +11,9 @@ def index():
 
 @app.route('/rooms')
 def rooms():
-    return render_template('rooms.html')
+    kind = get_kind_of_room()
+    flag = True
+    return render_template('rooms2.html', list_img = list_img, kinds_of_room = kind, flag = flag)
 
 
 if __name__ == '__main__':
