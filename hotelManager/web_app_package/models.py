@@ -53,7 +53,7 @@ class Room(db.Model):
 
 class KindOfRoom(db.Model):
     __tablename__ = 'kind_of_room'
-    id = Column(Integer, primary_key=True, autoincrement=True, server_default=text('1'))
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
     unit_price = Column(Float, default=0)
 
