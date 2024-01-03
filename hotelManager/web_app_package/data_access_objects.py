@@ -1,12 +1,17 @@
-import web_app_package.models
+from models import Customer, KindOfRoom, Bill, Service, Room
 
 def get_customer():
-    return web_app_package.Customer.query.all()
+    return Customer.query.all()
 
 def get_kind_of_room():
-    return web_app_package.KindOfRoom.query.all()
-def get_room(kw):
-    products = Room.query
-    if kw:
-        products = products.filter(Room.name.contains(kw))
-    return products.all()
+    return KindOfRoom.query.all()
+
+def get_bill():
+    return Bill.query.all()
+
+def get_service():
+    return Service.query.all()
+
+def get_room():
+    return Room.query.all()
+
