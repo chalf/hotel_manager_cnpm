@@ -1,5 +1,6 @@
-from models import Customer, KindOfRoom, Bill, Service, Room
+from models import Customer, KindOfRoom, Bill, Service, Room, User
 from web_app_package import db, app
+import hashlib
 
 
 def get_customer():
@@ -57,12 +58,27 @@ def unactive_state_room(rooms):
             .update({Room.state: 0}, synchronize_session=False)
         db.session.commit()
 
+
 def active():
     db.session.query(Room) \
         .update({Room.state: 1}, synchronize_session=False)
     db.session.commit()
 
 
+# admin
+def get_user_by_id(user_id):
+    return User.query.get(user_id)
+
+
+def auth_user(username, password):
+    password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
+
+    return User.query.filter(User.username.__eq__(username.strip()),
+                             User.password.__eq__(password)).first()
+
+
 if __name__ == '__main__':
     with app.app_context():
+        user = auth_user(username='admin', password='123456')
+        print(user.username, user.password)
         active()
