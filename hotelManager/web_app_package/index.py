@@ -15,6 +15,17 @@ for region_code in phonenumbers.SUPPORTED_REGIONS:
 
 
 # admin
+@app.route('/admin/login', methods=['post'])
+def admin_login():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    user = data_access_objects.auth_user(username=username, password=password)
+    if user:
+        login_user(user=user)
+
+    return redirect('/admin')
+
+
 @app.route("/login", methods=['get', 'post'])
 def process_user_login():
     if request.method.__eq__('POST'):
@@ -23,9 +34,17 @@ def process_user_login():
         user = data_access_objects.auth_user(username=username, password=password)
         if user:
             login_user(user=user)
-            return redirect('/admin')
+
+            next = request.args.get('next')
+            return redirect('/' if next is None else next)
 
     return render_template('login.html')
+
+
+@app.route('/logout')
+def process_user_logout():
+    logout_user()
+    return redirect("/login")
 
 
 @login.user_loader
