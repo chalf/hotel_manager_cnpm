@@ -208,3 +208,50 @@
     });
 
 })(jQuery);
+    // Chọn phòng
+function changeColor(element, room_name) {
+    element.classList.toggle('bg-info');
+
+    var inputRoom = document.getElementById('rooms');
+    var numRoomIp = (document.getElementById('numRoom').textContent);
+    var numRoom = parseInt(numRoomIp)
+    var tempString = inputRoom.value;
+    // Kiểm tra xem chuỗi có tồn tại trong input không
+    var isExist = tempString.includes(room_name);
+    // Nếu chuỗi đã tồn tại, loại bỏ nó; ngược lại, thêm vào
+    if (isExist) {
+        tempString = tempString.replace(room_name+" ", '');
+        numRoom = numRoom - 1;
+    } else {
+        tempString += room_name + ' ';
+        numRoom = numRoom + 1;
+    }
+    // Gán giá trị mới vào input
+    inputRoom.value = tempString;
+    document.getElementById('numRoom').textContent = numRoom
+}
+
+function checkCustomerWithRoom(id, name, price) {
+    // Lấy giá trị từ input A và B Chuyển đổi giá trị thành số
+    var numOfCus = parseFloat(document.getElementById('numOfGuests').value) ;
+    var numRoom = parseFloat(document.getElementById('numRoom').textContent) ;
+    var capacity = parseInt(document.getElementById('capacity').textContent) ;
+
+    //Kiểm tra nếu A > B, yêu cầu nhập lại giá trị B
+    if (isNaN(numRoom) || isNaN(numOfCus) || (numRoom * capacity) < numOfCus) {
+        document.getElementById('numOfGuests').value = ''
+        alert('Số khách vượt quá mức quy định');
+    } else {
+        var rooms = String(document.getElementById('rooms').value)
+        fetch('/booking2')
+        fetch('/api/book_room', {
+        method: "post",
+        body: JSON.stringify({
+            "rooms": rooms,
+        }),
+        headers: {
+            'Content-Type': "application/json"
+        }
+    })
+}
+}
