@@ -13,7 +13,6 @@ app.config['MAIL_PASSWORD'] = 'khoalatao123@'  # Thay bằng mật khẩu email 
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 
-
 mail = Mail(app)
 
 
@@ -69,8 +68,8 @@ def index():
 @app.route('/rooms')
 def rooms():
     kind = get_kind_of_room()
-    flag = True
-    return render_template('rooms2.html', list_img=list_img, kinds_of_room=kind, flag=flag)
+    return render_template('rooms.html', kinds_of_room = kind, list_img = list_img,
+                           limit_of_img=len(list_img), limit_of_kor=len(kind))
 
 
 @app.route('/booking')
@@ -138,13 +137,17 @@ def pay():
 
 @app.route('/payment-success')
 def payment_success():
-    utils.send_mail('Thông báo: Thanh toán thành công', 'Thanh toán của bạn đã được xác nhận thành công. xin cảm ơn và hẹn gặp lại!', session.get("emailPayer"))
+    utils.send_mail('Thông báo: Thanh toán thành công',
+                    'Thanh toán của bạn đã được xác nhận thành công. xin cảm ơn và hẹn gặp lại!',
+                    session.get("emailPayer"))
     return render_template("index.html")
 
 
 @app.route('/payment-cancel')
 def payment_fail():
-    utils.send_mail('Thông báo: Thanh toán thất bại', 'Thanh toán của bạn đã được xác nhận thất. xin hãy thanh toán lại! cảm ơn', session.get("emailPayer"))
+    utils.send_mail('Thông báo: Thanh toán thất bại',
+                    'Thanh toán của bạn đã được xác nhận thất. xin hãy thanh toán lại! cảm ơn',
+                    session.get("emailPayer"))
     return redirect('/pay')
 
 

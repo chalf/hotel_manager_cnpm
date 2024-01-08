@@ -7,27 +7,32 @@
 <div class="container mt-5 spad ">
     <h2 class="mb-4 text-info">Hotel Booking Form</h2>
     <form action="/booking2">
-                <div class="mb-3">
-                    <label for="checkInDate" class="form-label">Check-In Date</label>
-                    <input name="checkInDate" type="date" class="form-control" id="checkInDate" required>
-                </div>
+        <div class="mb-3">
+            <label for="checkInDate" class="form-label">Check-In Date</label>
+            <input name="checkInDate" type="date" class="form-control" id="checkInDate" required>
+        </div>
 
-                <div class="mb-3">
-                    <label for="checkOutDate" class="form-label">Check-Out Date</label>
-                    <input name="checkOutDate" type="date" class="form-control" id="checkOutDate" required>
-                </div>
+        <div class="mb-3">
+            <label for="checkOutDate" class="form-label">Check-Out Date</label>
+            <input name="checkOutDate" type="date" class="form-control" id="checkOutDate" required>
+        </div>
         <div>
-            <label  class="form-label">Chọn phòng:</label>
-                 <ul class="list__rooms mb3">
-                    {% for r in rooms %}
-                        {% if r.state %}
-                            <li onclick="changeColor(this, '{{r.name}}')" class="btn rounded bg-success room__item d-flex align-items-center justify-content-center" >{{ r.name }}</li>
-                        {% else %}
-                            <li class="btn rounded bg-danger room__item d-flex align-items-center justify-content-center" >{{ r.name }}</li>
-                        {% endif %}
-                    {% endfor %}
-                 </ul>
-            <label  class="form-label">Selected Room <span id="numRoom">0</span> </label>
+            <label class="form-label">Chọn phòng:</label>
+            <ul class="list__rooms mb3">
+                {% for r in rooms %}
+                {% if r.state %}
+                <li onclick="changeColor(this, '{{r.name}}')"
+                    class="btn rounded bg-success room__item d-flex align-items-center justify-content-center">{{ r.name
+                    }}
+                </li>
+                {% else %}
+                <li class="btn rounded bg-danger room__item d-flex align-items-center justify-content-center">{{ r.name
+                    }}
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+            <label class="form-label">Selected Room <span id="numRoom">0</span> </label>
 
 
             <input name="rooms" disabled="disabled" type="text" class="form-control " id="rooms" required>
@@ -35,7 +40,7 @@
 
         <div class="mb-3">
             <label for="numOfGuests" class="form-label">Number of Guests (Max of room is <span id="capacity">{{capacity}}</span>)</label>
-            <input name="numOfGuests" type="number" class="form-control" id="numOfGuests"  name="numOfGuests" required>
+            <input name="numOfGuests" type="number" class="form-control" id="numOfGuests" name="numOfGuests" required>
         </div>
 
         <button onclick="checkCustomerWithRoom()" type="submit" class="btn btn-primary">Submit Booking</button>
@@ -43,5 +48,4 @@
 
 </div>
 {% endblock %}
-
 
