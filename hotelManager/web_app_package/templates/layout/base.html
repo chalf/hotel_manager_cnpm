@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Hiroto Template">
+    <meta name="keywords" content="Hiroto, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Template</title>
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}"  type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/elegant-icons.css') }}"  type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nice-select.css') }}"  type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.min.css') }}"  type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}"  type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/slicknav.min.css') }}"  type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"  type="text/css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/booking.css') }}"  type="text/css">
+
+    <link rel="stylesheet" href="/static/css/rooms.css">
+
+
+
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Offcanvas Menu Begin -->
+    <div class="offcanvas-menu-overlay"></div>
+    <div class="offcanvas-menu-wrapper">
+        <div class="offcanvas__logo">
+            <a href="./index.html"><img src="static/img/logo.png" alt=""></a>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+        <div class="offcanvas__btn__widget">
+            <a href="#">Book Now <span class="arrow_right"></span></a>
+        </div>
+        <div class="offcanvas__widget">
+            <ul>
+                <li><span class="icon_pin_alt"></span> 96 Ernser Vista Suite 437, NY, US</li>
+                <li><span class="icon_phone"></span> (123) 456-78-910</li>
+            </ul>
+        </div>
+        <div class="offcanvas__language">
+            <img src="static/img/lan.png" alt="">
+            <span>English</span>
+            <i class="fa fa-angle-down"></i>
+            <ul>
+                <li>English</li>
+                <li>Bangla</li>
+            </ul>
+        </div>
+        <div class="offcanvas__auth">
+            <ul>
+                <li><a href="#">Login</a></li>
+                <li><a href="#">Register</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- Offcanvas Menu End -->
+
+    <!-- Header Section Begin -->
+    {% include 'layout/header.html' %}
+    <!-- Header Section End -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer Section Begin -->
+    {% include 'layout/footer.html' %}
+    <!-- Footer Section End -->
+
+    <!-- Js Plugins -->
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/jquery.nice-select.min.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/jquery.slicknav.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}" ></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"   ></script>
+</body>
+
+</html>

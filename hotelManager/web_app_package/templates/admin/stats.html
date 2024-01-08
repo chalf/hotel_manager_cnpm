@@ -1,0 +1,144 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<h1 class="text-center text-info">THỐNG KÊ BÁO CÁO</h1>
+<form id="dateForm1" action="/admin/statsview">
+    <div style="height: 500px">
+        <h2 class="text-info">Thống kê danh thu theo tháng</h2>
+
+        <label for="monthPrice">Chọn tháng:</label>
+        <input type="number" id="monthPrice" name="monthPrice" min="1" max="12" value={{monthPrice}}>
+
+        <label for="yearPrice">Chọn năm:</label>
+        <input type="number" id="yearPrice" name="yearPrice" min="2000" max="2099" value={{yearPrice}}>
+
+        <button type="submit">Thống kê</button>
+        <div class="row">
+            <div class="col-md-5"></div>
+            <div class="col-md-7">
+                <canvas id="myChartPrice"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div style="height: 500px">
+        <h2 class="text-info">Thống kê tần suất sử dụng phòng</h2>
+        <label for="monthUseRoom">Chọn tháng:</label>
+        <input type="number" id="monthUseRoom" name="monthUseRoom" min="1" max="12" value={{monthRoom}}>
+
+        <label for="yearUseRoom">Chọn năm:</label>
+        <input type="number" id="yearUseRoom" name="yearUseRoom" min="2000" max="2099" value={{yearRoom}}>
+
+        <button type="submit">Thống kê</button>
+        <div class="row">
+            <div class="col-md-5"></div>
+            <div class="col-md-7">
+                <canvas id="myChartRoom"></canvas>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+  let dataPrice=[];
+  let labelPrice=[];
+
+
+  {% for s in statsPrice %}
+  dataPrice.push({{s[2]}})
+  labelPrice.push('{{s[1]}}')
+  {% endfor %}
+
+  let dataRoom1=[];
+  let dataRoom=[];
+  let labelRoom=[];
+
+  let a=0;
+  {% for s in RoomUsageStatistics %}
+  a+={{s[2]}}
+  {% endfor %}
+
+  {% for s in RoomUsageStatistics %}
+  dataRoom.push({{s[2]}}/a*100)
+  labelRoom.push('{{s[1]}}')
+  {% endfor %}
+
+  window.onload = function() {
+    const ctx1 = document.getElementById('myChartPrice');
+
+    new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: labelPrice,
+        datasets: [{
+          label: 'VNĐ',
+          data: dataPrice,
+          borderWidth: 1,
+          backgroundColor: [
+            getRandomColor(),
+            getRandomColor(),
+            getRandomColor(),
+            getRandomColor(),
+            getRandomColor()
+        ],
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+     const ctx2 = document.getElementById('myChartRoom');
+
+     new Chart(ctx2, {
+      type: 'pie',
+      data: {
+        labels: labelRoom,
+        datasets: [{
+          label: '%',
+          data: dataRoom,
+          borderWidth: 1,
+          backgroundColor: [
+            getRandomColor(),
+            getRandomColor(),
+            getRandomColor(),
+            getRandomColor(),
+            getRandomColor()
+        ],
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+  }
+
+
+
+
+
+
+</script>
+
+{% endblock %}
