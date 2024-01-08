@@ -1,17 +1,20 @@
-import phonenumbers, pycountry
+import utils
+import pyotp, paypalrestsdk
 from flask import render_template, request, session, jsonify, redirect
 from flask_login import login_user, logout_user, login_required
 from web_app_package import app, list_img, data_access_objects, login
 from web_app_package.data_access_objects import get_kind_of_room, get_room, active_state_room, unactive_state_room
+from flask_mail import Mail, Message
 
-country_codes = [country.alpha_2 for country in pycountry.countries]
-countries = {}
-for region_code in phonenumbers.SUPPORTED_REGIONS:
-    country_code = phonenumbers.country_code_for_region(region_code)
-    country_alpha_2 = phonenumbers.region_code_for_country_code(country_code)
-    if country_alpha_2 in country_codes:
-        country_name = pycountry.countries.get(alpha_2=country_alpha_2).name
-        countries[f'+{country_code}'] = str(country_name) + " (+" + str(country_code) + ")"
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Thay bằng địa chỉ SMTP của bạn
+app.config['MAIL_PORT'] = 587  # Thay đổi cổng SMTP nếu cần
+app.config['MAIL_USERNAME'] = '2151050194khoa@ou.edu.vn'  # Thay bằng tên đăng nhập email của bạn
+app.config['MAIL_PASSWORD'] = 'khoalatao123@'  # Thay bằng mật khẩu email của bạn
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+
+
+mail = Mail(app)
 
 
 # admin
@@ -57,7 +60,6 @@ def get_user(user_id):
     return data_access_objects.get_user_by_id(user_id)
 
 
-
 # page
 @app.route('/')
 def index():
@@ -80,9 +82,70 @@ def booking():
 
 @app.route('/booking2')
 def booking2():
-    if countries:
-        return render_template('booking2.html', countries=countries)
-    return "false"
+    num_of_guests = request.args.get('numOfGuests')
+    session["numOfGuests"] = num_of_guests
+    return render_template('booking2.html', numOfGuests=num_of_guests)
+
+
+@app.route('/pay')
+def pay():
+    session["emailPayer"] = request.args.get("emailPayer")
+    amount = 500
+    description = "Thanh toán tiền phòng"
+
+    paypalrestsdk.configure({
+        "mode": "sandbox",  # Chế độ sandbox hoặc live
+        "client_id": "AQenbzsSwZyIYheIAFCbetVGYxFgRF-OlqDlK7EpIQDb9IkVP1dFD84uRgDau6PpGVHp1JuYQSIyLjBa",
+        "client_secret": "EGiHbIMLHMQGzYuvpAbZZBf-2p-i6pfZk8eGZTGGw00VBb2WmHf9f_Tw8O3-I1WJADAPtLMlTjw5sivd"
+    })
+
+    # Tạo thanh toán PayPal
+    payment = paypalrestsdk.Payment({
+        "intent": "sale",
+        "payer": {
+            "payment_method": "paypal"
+        },
+        "redirect_urls": {
+            "return_url": "http://localhost:5000/payment-success",
+            "cancel_url": "http://localhost:5000/payment-cancel"
+        },
+        "transactions": [{
+            "item_list": {
+                "items": [{
+                    "name": "Item",
+                    "sku": "item",
+                    "price": amount,
+                    "currency": "USD",
+                    "quantity": 1
+                }]
+            },
+            "amount": {
+                "total": amount,
+                "currency": "USD"
+            },
+            "description": description
+        }]
+    })
+
+    if payment.create():
+        for link in payment.links:
+            if link.method == "REDIRECT":
+                redirect_url = str(link.href)
+                return redirect(redirect_url)
+    else:
+        return "Error during payment creation"
+
+
+@app.route('/payment-success')
+def payment_success():
+    utils.send_mail('Thông báo: Thanh toán thành công', 'Thanh toán của bạn đã được xác nhận thành công. xin cảm ơn và hẹn gặp lại!', session.get("emailPayer"))
+    return render_template("index.html")
+
+
+@app.route('/payment-cancel')
+def payment_fail():
+    utils.send_mail('Thông báo: Thanh toán thất bại', 'Thanh toán của bạn đã được xác nhận thất. xin hãy thanh toán lại! cảm ơn', session.get("emailPayer"))
+    return redirect('/pay')
 
 
 # @app.route('/temp')

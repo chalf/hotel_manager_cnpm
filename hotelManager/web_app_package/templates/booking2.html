@@ -7,9 +7,9 @@
 <div class="container mt-5 spad">
     <h2 class="mb-4 text-info">Hotel Booking Form</h2>
 
-    <form>
+    <form action="/pay">
         <div class="mb-3">
-            <label for="fullName" class="form-label">Full Name</label>
+            <label for="fullName" class="form-label">Full Name X</label>
             <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
         </div>
 
@@ -18,28 +18,38 @@
             <input type="text" class="form-control" id="cccd" placeholder="Enter your CCCD/passprot" required>
         </div>
 
-         <div class="mb-3">
+        <div class="mb-3">
             <label for="address" class="form-label">Address</label>
             <input type="text" class="form-control" id="address" placeholder="Enter your address" required>
         </div>
 
         <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+            <label for="emailPayer" class="form-label">Email address</label>
+            <input type="emailPayer" class="form-control" id="emailPayer" name="emailPayer" placeholder="name@example.com" required>
         </div>
+        {% set guests = numOfGuests | int %}
+        {% for i in range(guests) %}
+        <div class="mb-3">
+            <label class="form-label">Stay people {{i+1}}:</label>
 
-         <div class="mb-3">
-              <label for="email" class="form-label">Phone number</label>
-              <div>
-                  <select name="country" id="countryPhone" style="height: 500px; display: block ;" >
-                      {% for code, country in countries.items() %}
-                       <option value={{code}}>{{ country }}</option>
-                      {% endfor %}
-                  </select>
-              <input type="text" name="phone" id="phone" placeholder="Enter phone number">
-              </div>
-         </div>
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" name="fullName{{i+1}}" placeholder="Enter your full name" required>
+            </div>
 
+            <div class="mb-3">
+                <label class="form-label">CCCD</label>
+                <input type="text" class="form-control" name="CCCD{{i+1}}" placeholder="Enter your CCCD/passprot"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Address</label>
+                <input type="text" class="form-control" name="Address{{i+1}}" placeholder="Enter your address" required>
+            </div>
+
+        </div>
+        {%endfor%}
         <button type="submit" class="btn btn-primary">Submit Booking</button>
     </form>
 </div>
