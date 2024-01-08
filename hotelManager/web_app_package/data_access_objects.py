@@ -1,6 +1,7 @@
-from models import Customer, KindOfRoom, Bill, Service, Room, User
+from models import Customer, KindOfRoom, Bill, Service, Room, CustomerBooksRooms, User
 from web_app_package import db, app
 import hashlib
+from sqlalchemy import func
 
 
 def get_customer():
@@ -77,8 +78,37 @@ def auth_user(username, password):
                              User.password.__eq__(password)).first()
 
 
+def count_products():
+    return db.session.query(KindOfRoom.id, KindOfRoom.name,
+                            func.count(Room.id)).join(Room,
+                                                      Room.kind_of_room_id == KindOfRoom.id, isouter=True) \
+        .group_by(KindOfRoom.id).all()
+
+
+def get_total_amount(selected_month, selected_year):
+    return db.session.query(
+        CustomerBooksRooms.customer_id,
+        Room.name,
+        KindOfRoom.unit_price
+    ).join(Room, Room.id == CustomerBooksRooms.room_id
+           ).join(KindOfRoom, KindOfRoom.id == Room.kind_of_room_id
+                  ).filter(func.year(CustomerBooksRooms.booking_date) == selected_year
+                           ).filter(func.month(CustomerBooksRooms.booking_date) == selected_month
+                                    ).all()
+
+
+def get_room_used(month, year):
+    return db.session.query(
+        func.extract('month', CustomerBooksRooms.booking_date).label('month'),
+        Room.name.label('room_name'),
+        func.count().label('usage_count')
+    ).join(Room, Room.id == CustomerBooksRooms.room_id) \
+        .filter(func.extract('month', CustomerBooksRooms.booking_date) == month) \
+        .filter(func.extract('year', CustomerBooksRooms.booking_date) == year) \
+        .group_by(func.extract('month', CustomerBooksRooms.booking_date), Room.name).all()
+
+
 if __name__ == '__main__':
     with app.app_context():
-        user = auth_user(username='admin', password='123456')
-        print(user.username, user.password)
+        print(get_room_used('01', "2024"))
         active()

@@ -47,9 +47,15 @@ def process_user_logout():
     return redirect("/login")
 
 
+@app.route('/statistical')
+def process_statistical():
+    return redirect('/admin/statsview')
+
+
 @login.user_loader
 def get_user(user_id):
     return data_access_objects.get_user_by_id(user_id)
+
 
 
 # page
