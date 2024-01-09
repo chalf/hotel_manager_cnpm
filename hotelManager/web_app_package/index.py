@@ -111,11 +111,18 @@ def booking2():
 
 @app.route('/api/book_room', methods=['post'])
 def book_rooms():
+    session.permanent = True
     data = request.json
-    rooms = str(data.get("rooms")).strip().split(' ')
-    if __name__ == '__main__':
-        print(rooms)
-    session["rooms"] = rooms
+    rooms = str(data.get("rooms"))
+    session['rooms'] = rooms
+    if __name__ == "__main__":
+        print(session.get('rooms'))
+    try:
+        a = 0
+    except:
+        return jsonify({'status': 500, 'err_msg': 'Hệ thống đang có lỗi!'})
+    else:
+        return jsonify({'status': 200})
 
 
 @app.route('/pay')
@@ -126,6 +133,11 @@ def pay():
     addressPayer = request.args.get("addressPayer")
     checkin_date = session.get('checkInDate')
     checkout_date = session.get('checkOutDate')
+    rooms = session.get('rooms')
+    amount = session.get('total_price')
+
+    if __name__ == "__main__":
+        print(checkin_date, checkout_date, rooms, amount)
 
     result = add_person(fullNamePayer, int(cccdPayer), addressPayer, email_payer)
     lf = add_form(checkout_date, checkin_date, result)
@@ -134,16 +146,12 @@ def pay():
         CCCD = request.args.get("CCCD" + str(i + 1))
         Address = request.args.get("Address" + str(i + 1))
         write_staying_person(fullname, int(CCCD), Address, lf.id)
-
-    rooms = session.get('rooms')
-
-    for r in rooms:
+    for r in rooms.strip().split(' '):
         room = get_id_room(r)
         add_room_booking(room.id, lf.id)
     unactive_state_room(rooms)
     session["emailPayer"] = email_payer
 
-    amount = session.get('total_price')
     description = "Thanh toán tiền phòng"
     paypalrestsdk.configure({
         "mode": "sandbox",

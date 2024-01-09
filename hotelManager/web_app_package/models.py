@@ -109,68 +109,67 @@ class StayingPerson(Customer):  # Người ở
     booking_form_id = Column(Integer, ForeignKey('booking_form.id'), nullable=False)
     kind_of_customer_id = Column(Integer, ForeignKey('kind_of_customer.id'), nullable=False)
 
-#
-# if __name__ == '__main__':
-#     with app.app_context():
 
-        # koc1 = KindOfCustomer(name="Foreign", multiplier=1.5)
-        # koc2 = KindOfCustomer(name="In Country", multiplier=1.0)
-        # db.session.add_all([koc1, koc2])
-        # db.session.commit()
-        # kor1 = KindOfRoom(name="Normal", unit_price=500000)
-        # kor2 = KindOfRoom(name="Vip 1", unit_price=1000000)
-        # kor3 = KindOfRoom(name="Vip 2", unit_price=1000000)
-        # db.session.add_all([kor1, kor2, kor3])
-        # db.session.commit()
-        # e1 = Employee(name='Dương Trần Ngọc Hiếu', username="NhanVien",
-        #               password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()))
-        # e2 = Employee(name='ADMIN', username="Admin",
-        #               password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()), user_role=UserRoleEnum.ADMIN)
-        # db.session.add_all([e1,e2])
-        # db.session.commit()
-        # s1 = SurchargeRate(surcharge=0.25)
-        # db.session.add_all([s1])
-        # db.session.commit()
-        #
-        # rr1 = Room(name="A0", kind_of_room_id=1)
-        # rr2 = Room(name="A1", kind_of_room_id=1)
-        # rr3 = Room(name="A2", kind_of_room_id=1)
-        # rr4 = Room(name="A3", kind_of_room_id=1)
-        # rr5 = Room(name="B0", kind_of_room_id=2)
-        # rr6 = Room(name="B1", kind_of_room_id=2)
-        # db.session.add_all([rr1, rr2, rr3, rr4, rr5, rr6])
-        # db.session.commit()
-#
-#         bp1 = BookingPerson(name="Lê Văn Hiếu", cccd=123, number=1234, email="abc@gmail.com")
-#         bp2 = BookingPerson(name="Nguyễn Minh San", cccd=2231, number=1234, email="abc@gmail.com")
-#         db.session.add_all([bp1, bp2])
-#         db.session.commit()
-#
-#         fb1 = BookingForm(booking_date='2023-01-15', checkin_date='2023-01-16', checkout_date='2023-01-17', booking_person_id=1)
-#         fb2 = BookingForm(booking_date='2023-01-15', checkin_date='2023-01-16', checkout_date='2023-01-17', booking_person_id=2)
-#         db.session.add_all([fb1, fb2])
-#         db.session.commit()
-#
-#         sp1 = StayingPerson(name="Hồ Phan Tấn Khoa", cccd=2223, address="Quận 7", booking_form_id=1, kind_of_customer_id=1)
-#         sp2 = StayingPerson(name="Lê Thanh Danh", cccd=333, address="Quận 12", booking_form_id=2, kind_of_customer_id=1)
-#         db.session.add_all([sp1, sp2])
-#         db.session.commit()
-#
-#         b1 = Bill(total=1000000, booking_form_id=1, surcharge_id=1, employee_id=1)
-#         b2 = Bill(total=10000000, booking_form_id=2, surcharge_id=1, employee_id=1)
-#         db.session.add_all([b1, b2])
-#         db.session.commit()
-#         # tạo quan hệ n-n Room và Phiếu đặt
-#         bf1 = BookingForm.query.get(1)
-#         r1 = Room.query.get(1)
-#         r2 = Room.query.get(2)
-#         bf1.rooms.append(r1)
-#         bf1.rooms.append(r2)
-#         db.session.add(bf1)
-#         db.session.commit()
-#
-#         bf2 = BookingForm.query.get(2)
-#         r3 = Room.query.get(4)
-#         bf2.rooms.append(r3)
-#         db.session.add(bf2)
-#         db.session.commit()
+if __name__ == '__main__':
+    with app.app_context():
+        koc1 = KindOfCustomer(name="Foreign", multiplier=1.5)
+        koc2 = KindOfCustomer(name="In Country", multiplier=1.0)
+        db.session.add_all([koc1, koc2])
+        db.session.commit()
+        kor1 = KindOfRoom(name="Normal", unit_price=500000)
+        kor2 = KindOfRoom(name="Vip 1", unit_price=1000000)
+        kor3 = KindOfRoom(name="Vip 2", unit_price=1000000)
+        db.session.add_all([kor1, kor2, kor3])
+        db.session.commit()
+        e1 = Employee(name='Dương Trần Ngọc Hiếu', username="NhanVien",
+                      password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()))
+        e2 = Employee(name='ADMIN', username="Admin",
+                      password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()), user_role=UserRoleEnum.ADMIN)
+        db.session.add_all([e1,e2])
+        db.session.commit()
+        s1 = SurchargeRate(surcharge=0.25)
+        db.session.add_all([s1])
+        db.session.commit()
+
+        rr1 = Room(name="A0", kind_of_room_id=1)
+        rr2 = Room(name="A1", kind_of_room_id=1)
+        rr3 = Room(name="A2", kind_of_room_id=1)
+        rr4 = Room(name="A3", kind_of_room_id=1)
+        rr5 = Room(name="B0", kind_of_room_id=2)
+        rr6 = Room(name="B1", kind_of_room_id=2)
+        db.session.add_all([rr1, rr2, rr3, rr4, rr5, rr6])
+        db.session.commit()
+
+        bp1 = BookingPerson(name="Lê Văn Hiếu", cccd=123, number=1234, email="abc@gmail.com")
+        bp2 = BookingPerson(name="Nguyễn Minh San", cccd=2231, number=1234, email="abc@gmail.com")
+        db.session.add_all([bp1, bp2])
+        db.session.commit()
+
+        fb1 = BookingForm(booking_date='2023-01-15', checkin_date='2023-01-16', checkout_date='2023-01-17', booking_person_id=1)
+        fb2 = BookingForm(booking_date='2023-01-15', checkin_date='2023-01-16', checkout_date='2023-01-17', booking_person_id=2)
+        db.session.add_all([fb1, fb2])
+        db.session.commit()
+
+        sp1 = StayingPerson(name="Hồ Phan Tấn Khoa", cccd=2223, address="Quận 7", booking_form_id=1, kind_of_customer_id=1)
+        sp2 = StayingPerson(name="Lê Thanh Danh", cccd=333, address="Quận 12", booking_form_id=2, kind_of_customer_id=1)
+        db.session.add_all([sp1, sp2])
+        db.session.commit()
+
+        b1 = Bill(total=1000000, booking_form_id=1, surcharge_id=1, employee_id=1)
+        b2 = Bill(total=10000000, booking_form_id=2, surcharge_id=1, employee_id=1)
+        db.session.add_all([b1, b2])
+        db.session.commit()
+        # tạo quan hệ n-n Room và Phiếu đặt
+        bf1 = BookingForm.query.get(1)
+        r1 = Room.query.get(1)
+        r2 = Room.query.get(2)
+        bf1.rooms.append(r1)
+        bf1.rooms.append(r2)
+        db.session.add(bf1)
+        db.session.commit()
+
+        bf2 = BookingForm.query.get(2)
+        r3 = Room.query.get(4)
+        bf2.rooms.append(r3)
+        db.session.add(bf2)
+        db.session.commit()
