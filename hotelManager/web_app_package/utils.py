@@ -1,5 +1,4 @@
 import phonenumbers, pycountry, paypalrestsdk
-from flask import redirect
 from flask_mail import Mail, Message
 from web_app_package import app
 

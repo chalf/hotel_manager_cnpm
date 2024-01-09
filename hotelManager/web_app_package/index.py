@@ -35,10 +35,9 @@ def process_user_login():
         password = request.form.get('password')
         user = data_access_objects.auth_user(username=username, password=password)
         if user:
-            login_user(user=user)
+            # login_user(user=user)
 
-            next = request.args.get('next')
-            return redirect('/' if next is None else next)
+            return redirect('/admin')
 
     return render_template('login.html')
 
@@ -62,13 +61,19 @@ def get_user(user_id):
 # page
 @app.route('/')
 def index():
-    return render_template('index.html')
+    try:
+        alert = session["alert"]
+        session.pop("alert")
+        return render_template('index.html', alert=alert)
+    except KeyError:
+        alert = None
+    return render_template('index.html', alert=alert)
 
 
 @app.route('/rooms')
 def rooms():
     kind = get_kind_of_room()
-    return render_template('rooms.html', kinds_of_room = kind, list_img = list_img,
+    return render_template('rooms.html', kinds_of_room=kind, list_img=list_img,
                            limit_of_img=len(list_img), limit_of_kor=len(kind))
 
 
@@ -88,7 +93,8 @@ def booking2():
 
 @app.route('/pay')
 def pay():
-    session["emailPayer"] = request.args.get("emailPayer")
+    email_payer = request.args.get("emailPayer")
+    session["email"] = email_payer
     amount = 500
     description = "Thanh toán tiền phòng"
 
@@ -137,17 +143,20 @@ def pay():
 
 @app.route('/payment-success')
 def payment_success():
-    utils.send_mail('Thông báo: Thanh toán thành công',
-                    'Thanh toán của bạn đã được xác nhận thành công. xin cảm ơn và hẹn gặp lại!',
-                    session.get("emailPayer"))
-    return render_template("index.html")
+    email_payer = session["email"]
+    if __name__ == "__main__":
+        print(email_payer)
+    if email_payer:  # Kiểm tra xem giá trị của email_payer có tồn tại hay không
+        # Gửi email với địa chỉ email_payer
+        utils.send_mail('Thông báo: Thanh toán thành công', 'Thanh toán của bạn đã được xác nhận thành công. Cảm ơn và hẹn gặp lại!', email_payer)
+        return render_template("index.html")
+    else:
+        return "Địa chỉ email không tồn tại."
 
 
 @app.route('/payment-cancel')
 def payment_fail():
-    utils.send_mail('Thông báo: Thanh toán thất bại',
-                    'Thanh toán của bạn đã được xác nhận thất. xin hãy thanh toán lại! cảm ơn',
-                    session.get("emailPayer"))
+    utils.send_mail('Thông báo: Thanh toán thất bại', 'Thanh toán của bạn đã được xác nhận thất. xin hãy thanh toán lại! cảm ơn', session.get("emailPayer"))
     return redirect('/pay')
 
 

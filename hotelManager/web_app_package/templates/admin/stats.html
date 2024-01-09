@@ -4,7 +4,7 @@
 <h1 class="text-center text-info">THỐNG KÊ BÁO CÁO</h1>
 <form id="dateForm1" action="/admin/statsview">
     <div style="height: 500px">
-        <h2 class="text-info">Thống kê danh thu theo tháng</h2>
+        <h2 class="text-info">THỐNG KÊ DOANH THU THEO THÁNG</h2>
 
         <label for="monthPrice">Chọn tháng:</label>
         <input type="number" id="monthPrice" name="monthPrice" min="1" max="12" value={{monthPrice}}>
@@ -14,15 +14,37 @@
 
         <button type="submit">Thống kê</button>
         <div class="row">
-            <div class="col-md-5"></div>
-            <div class="col-md-7">
+            <div class="col-md-5 col-xs-12">
+                <table class="table">
+                    <tr>
+                        <th>STT</th>
+                        <th>Loại phòng</th>
+                        <th>Doanh Thu</th>
+                        <th>Số lượt thuê</th>
+                        <th>Tỉ lệ</th>
+                    </tr>
+                    {% for s in roomStats['RoomStats'] %}
+                    <tr>
+                        <td>{{loop.index}}</td>
+                        <td>{{s['Kind Room']}}</td>
+                        <td>{{s['Revenue']}}</td>
+                        <td>{{s['Booking Count']}}</td>
+                        <td>{{s['Percentage']}}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <th colspan="4">Tổng doanh thu: {{roomStats['TotalRevenue']}} VNĐ</th>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-7 col-xs-12">
                 <canvas id="myChartPrice"></canvas>
             </div>
         </div>
     </div>
 
     <div style="height: 500px">
-        <h2 class="text-info">Thống kê tần suất sử dụng phòng</h2>
+        <h2 class="text-info">THỐNG KÊ MẬT ĐỘ SỬ DỤNG PHÒNG</h2>
         <label for="monthUseRoom">Chọn tháng:</label>
         <input type="number" id="monthUseRoom" name="monthUseRoom" min="1" max="12" value={{monthRoom}}>
 
@@ -31,8 +53,25 @@
 
         <button type="submit">Thống kê</button>
         <div class="row">
-            <div class="col-md-5"></div>
-            <div class="col-md-7">
+            <div class="col-md-5 col-xs-12">
+                <table class="table">
+                    <tr>
+                        <th>STT</th>
+                        <th>Phòng</th>
+                        <th>Số ngày thuê</th>
+                        <th>Tỉ lệ</th>
+                    </tr>
+                    {% for s in roomOccupancyDensity %}
+                    <tr>
+                        <td>{{loop.index}}</td>
+                        <td>{{s['Room Name']}}</td>
+                        <td>{{s['Total Days Booked']}}</td>
+                        <td>{{s['Percentage']}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="col-md-7 col-xs-12">
                 <canvas id="myChartRoom"></canvas>
             </div>
         </div>
@@ -56,23 +95,19 @@ function getRandomColor() {
   let labelPrice=[];
 
 
-  {% for s in statsPrice %}
-  dataPrice.push({{s[2]}})
-  labelPrice.push('{{s[1]}}')
+  {% for s in roomStats['RoomStats'] %}
+  dataPrice.push({{s['Revenue']}})
+  labelPrice.push('{{s['Room Name']}}')
   {% endfor %}
 
-  let dataRoom1=[];
+
   let dataRoom=[];
   let labelRoom=[];
 
-  let a=0;
-  {% for s in RoomUsageStatistics %}
-  a+={{s[2]}}
-  {% endfor %}
 
-  {% for s in RoomUsageStatistics %}
-  dataRoom.push({{s[2]}}/a*100)
-  labelRoom.push('{{s[1]}}')
+  {% for s in roomOccupancyDensity %}
+  dataRoom.push({{s['Percentage']}})
+  labelRoom.push('{{s['Room Name']}}')
   {% endfor %}
 
   window.onload = function() {
@@ -133,6 +168,10 @@ function getRandomColor() {
     });
 
   }
+
+
+
+
 
 
 
