@@ -2,6 +2,7 @@ import phonenumbers, pycountry, paypalrestsdk
 from flask_mail import Mail, Message
 from web_app_package import app
 from datetime import datetime
+# from web_app_package.models import BookingForm, BookingPerson, StayingPerson
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Thay bằng địa chỉ SMTP của bạn
 app.config['MAIL_PORT'] = 587  # Thay đổi cổng SMTP nếu cần
@@ -28,7 +29,7 @@ def get_phone_codes():
 
 
 def send_mail(message, body, recipients):
-    msg = Message('Thông báo: '+message,
+    msg = Message('Thông báo: ' + message,
                   sender='2151050194khoa@ou.edu.vn',
                   recipients=[recipients])
     msg.body = body
@@ -43,3 +44,20 @@ def get_total_day(dayCheckIn, dayCheckOut):
     delta = check_out_date - check_in_date
     num_of_days = delta.days
     return num_of_days
+#
+#
+# def write_booking_person(fullNamePayer, cccdPayer, addressPayer, email_payer):
+#     BP = BookingPerson(name=fullNamePayer, cccd=cccdPayer, number=addressPayer, email=email_payer)
+#     db.session.add(BP)
+#     db.session.commit()
+#     db.session.flush()
+#
+#
+# def write_booking_form(formatted_datetime, checkin_date, checkout_date, latest_booking_person):
+#     BF = BookingForm(booking_date=formatted_datetime, checkin_date=checkin_date, checkout_date=checkout_date, booking_person_id=latest_booking_person)
+#     db.session.add(BF)
+#     db.session.commit()
+#     db.session.flush()
+
+
+

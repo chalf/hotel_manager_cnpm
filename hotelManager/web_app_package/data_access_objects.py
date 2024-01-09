@@ -1,7 +1,9 @@
-from models import Customer, KindOfRoom, Bill, Room, Employee, StayingPerson, BookingForm, room_booking_form
+from models import Customer, KindOfRoom, Bill, Room, Employee, StayingPerson, BookingForm, room_booking_form, \
+    BookingPerson
 from web_app_package import db, app
 import hashlib
 from sqlalchemy import func, extract
+from datetime import datetime
 
 
 def get_capacity(room_type):
@@ -123,7 +125,9 @@ def room_usage_report(month, year):
 
 
 def room_booking_stats_revenue_for_month_year(month, year):
-    room_booking_info = db.session.query(Room.name, KindOfRoom.unit_price, func.count(BookingForm.id).label('booking_count'), func.sum(func.datediff(BookingForm.checkout_date, BookingForm.checkin_date)).label('days_booked'), KindOfRoom.name) \
+    room_booking_info = db.session.query(Room.name, KindOfRoom.unit_price,
+                                         func.count(BookingForm.id).label('booking_count'), func.sum(
+            func.datediff(BookingForm.checkout_date, BookingForm.checkin_date)).label('days_booked'), KindOfRoom.name) \
         .join(room_booking_form, Room.id == room_booking_form.c.room_id) \
         .join(BookingForm, room_booking_form.c.booking_form_id == BookingForm.id) \
         .join(KindOfRoom, Room.kind_of_room_id == KindOfRoom.id) \
@@ -153,7 +157,8 @@ def room_booking_stats_revenue_for_month_year(month, year):
 
 def room_utilization_report_for_month_year(month, year):
     room_utilization_info = db.session.query(Room.name,
-                                             func.sum(func.datediff(BookingForm.checkout_date, BookingForm.checkin_date)).label('total_days'),
+                                             func.sum(func.datediff(BookingForm.checkout_date,
+                                                                    BookingForm.checkin_date)).label('total_days'),
                                              func.count(BookingForm.id).label('booking_count')) \
         .join(room_booking_form, Room.id == room_booking_form.c.room_id) \
         .join(BookingForm, room_booking_form.c.booking_form_id == BookingForm.id) \
@@ -178,9 +183,49 @@ def room_utilization_report_for_month_year(month, year):
     return room_stats
 
 
+def add_person(fullNamePayer, cccdPayer, addressPayer, email_payer):
+    BP = BookingPerson(name=fullNamePayer, cccd=cccdPayer, number=addressPayer, email=email_payer)
+    db.session.add(BP)
+    db.session.commit()
+    lastBP = BookingPerson.query.order_by(BookingPerson.id.desc()).first()
+
+    return lastBP
+
+
+def add_form(checkout_date, checkin_date, lastBP):
+    current_datetime = datetime.now()
+    formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+    fb1 = BookingForm(booking_date=formatted_datetime, checkin_date=checkin_date, checkout_date=checkout_date,
+                      booking_person_id=lastBP.id)
+    db.session.add(fb1)
+    db.session.commit()
+    fb1 = BookingForm.query.order_by(BookingForm.id.desc()).first()
+
+    return fb1
+
+
+def write_staying_person(fullname, CCCD, Address, lb):
+    SP = StayingPerson(name=str(fullname), cccd=CCCD, address=Address, booking_form_id=lb, kind_of_customer_id=2)
+    db.session.add(SP)
+    db.session.commit()
+
+
+def add_room_booking(room_id, booking_room_id):
+    bf2 = BookingForm.query.get(booking_room_id)
+    r3 = Room.query.get(room_id)
+    bf2.rooms.append(r3)
+    db.session.add(bf2)
+    db.session.commit()
+
+
+def get_id_room(name):
+    room = Room.query.filter_by(name=name).first()
+    return room
+
+
 if __name__ == '__main__':
     with app.app_context():
-        # print(get_room_type_info_by_month('01', "2023"))
-        result = get_price_of_room(1)  # Ví dụ: Tháng 1 năm 2023
-        print(result)
+        add_room_booking(3, 2)
+
         active()
