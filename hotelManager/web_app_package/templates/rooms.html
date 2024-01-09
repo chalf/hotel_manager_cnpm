@@ -39,7 +39,7 @@
                         <li><span>Equipments:</span>Wifi, Television, Bathroom,...</li>
                         <li><span>View:</span>Sea View</li>
                     </ul>
-                    <a href="/booking?type_room={{x.id}}"><button class="btn btn-dark">Booking</button></a>
+                    <a href="{{ url_for('booking', type_room=loop.index) }}"><button class="btn btn-dark">Booking</button></a>
                 </div>
             </div>
         {% endfor %}

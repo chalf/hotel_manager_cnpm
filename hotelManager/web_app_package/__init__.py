@@ -3,14 +3,15 @@ from flask_sqlalchemy import SQLAlchemy
 from urllib.parse import quote
 from flask_login import LoginManager
 import cloudinary, cloudinary.uploader
-
+import os
 
 app = Flask(__name__)
 
 
-app.secret_key = '^%^&$^T&*Y(*&*^&*^*(&&*$^4765876986764^&%&*%^%$&*^(*^*%*&^436'
+app.secret_key = os.urandom(26)
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:%s@localhost/hoteldb?charset=utf8mb4" % quote('123456')
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+app.config["sess_expire_on_close"] = True
 
 db = SQLAlchemy(app)
 login = LoginManager(app=app)

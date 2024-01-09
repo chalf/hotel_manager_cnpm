@@ -213,7 +213,10 @@ function changeColor(element, room_name) {
     element.classList.toggle('bg-info');
 
     var inputRoom = document.getElementById('rooms');
-    var numRoomIp = (document.getElementById('numRoom').textContent);
+    var numRoomIp = parseInt(document.getElementById('numRoom').value);
+      if (isNaN(numRoomIp)) {
+        numRoomIp = 0;
+    }
     var numRoom = parseInt(numRoomIp)
     var tempString = inputRoom.value;
     // Kiểm tra xem chuỗi có tồn tại trong input không
@@ -228,13 +231,16 @@ function changeColor(element, room_name) {
     }
     // Gán giá trị mới vào input
     inputRoom.value = tempString;
-    document.getElementById('numRoom').textContent = numRoom
+    document.getElementById('numRoom').value = numRoom
 }
 
 function checkCustomerWithRoom(id, name, price) {
     // Lấy giá trị từ input A và B Chuyển đổi giá trị thành số
     var numOfCus = parseFloat(document.getElementById('numOfGuests').value) ;
-    var numRoom = parseFloat(document.getElementById('numRoom').textContent) ;
+    var numRoom = parseInt(document.getElementById('numRoom').value);
+    if (isNaN(numRoom)) {
+        numRoom = 1;
+    }
     var capacity = parseInt(document.getElementById('capacity').textContent) ;
 
     //Kiểm tra nếu A > B, yêu cầu nhập lại giá trị B

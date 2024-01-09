@@ -4,6 +4,20 @@ import hashlib
 from sqlalchemy import func, extract
 
 
+def get_capacity(room_type):
+    kind_of_room = KindOfRoom.query.filter_by(id=room_type).first()
+    if kind_of_room:
+        return kind_of_room.max_number_of_customer
+    return None
+
+
+def get_price_of_room(room_type):
+    kind_of_room = KindOfRoom.query.filter_by(id=room_type).first()
+    if kind_of_room:
+        return kind_of_room.unit_price
+    return None
+
+
 def get_customer():
     return Customer.query.all()
 
@@ -167,6 +181,6 @@ def room_utilization_report_for_month_year(month, year):
 if __name__ == '__main__':
     with app.app_context():
         # print(get_room_type_info_by_month('01', "2023"))
-        result = room_utilization_report_for_month_year('01', "2023")  # Ví dụ: Tháng 1 năm 2023
+        result = get_price_of_room(1)  # Ví dụ: Tháng 1 năm 2023
         print(result)
         active()

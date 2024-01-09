@@ -1,6 +1,7 @@
 import phonenumbers, pycountry, paypalrestsdk
 from flask_mail import Mail, Message
 from web_app_package import app
+from datetime import datetime
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Thay bằng địa chỉ SMTP của bạn
 app.config['MAIL_PORT'] = 587  # Thay đổi cổng SMTP nếu cần
@@ -33,3 +34,12 @@ def send_mail(message, body, recipients):
     msg.body = body
     mail.send(msg)
     return True
+
+
+def get_total_day(dayCheckIn, dayCheckOut):
+    check_in_date = datetime.strptime(dayCheckIn, '%Y-%m-%d')
+    check_out_date = datetime.strptime(dayCheckOut, '%Y-%m-%d')
+
+    delta = check_out_date - check_in_date
+    num_of_days = delta.days
+    return num_of_days

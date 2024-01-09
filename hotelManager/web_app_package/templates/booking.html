@@ -32,14 +32,15 @@
                 {% endif %}
                 {% endfor %}
             </ul>
-            <label class="form-label">Selected Room <span id="numRoom">0</span> </label>
-
-
+            <div class="mb-3">
+                <label for="numRoom" hidden="true" class="form-label">Selected Room </label>
+                <input type="text" hidden="true" id="numRoom" class="form-control" name="numRoom" value="0" required>
+            </div>
             <input name="rooms" disabled="disabled" type="text" class="form-control " id="rooms" required>
         </div>
 
         <div class="mb-3">
-            <label for="numOfGuests" class="form-label">Number of Guests (Max of room is <span id="capacity">{{capacity}}</span>)</label>
+            <label for="numOfGuests" class="form-label">Maximum number of guests per room is (<span id="capacity">{{capacity}}</span>)</label>
             <input name="numOfGuests" type="number" class="form-control" id="numOfGuests" name="numOfGuests" required>
         </div>
 

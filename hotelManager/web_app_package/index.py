@@ -1,10 +1,13 @@
 import utils
 import pyotp, paypalrestsdk
 from flask import render_template, request, session, jsonify, redirect
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user
 from web_app_package import app, list_img, data_access_objects, login
-from web_app_package.data_access_objects import get_kind_of_room, get_room, active_state_room, unactive_state_room
+from web_app_package.data_access_objects import get_kind_of_room, get_room, unactive_state_room, get_capacity, get_price_of_room
 from flask_mail import Mail, Message
+# from models import BookingPerson
+# from datetime import datetime
+# from sqlalchemy import desc
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Thay bằng địa chỉ SMTP của bạn
 app.config['MAIL_PORT'] = 587  # Thay đổi cổng SMTP nếu cần
@@ -12,6 +15,8 @@ app.config['MAIL_USERNAME'] = '2151050194khoa@ou.edu.vn'  # Thay bằng tên đ�
 app.config['MAIL_PASSWORD'] = 'khoalatao123@'  # Thay bằng mật khẩu email của bạn
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
+
+app.secret_key = "sdfsdfsdfsdafsdf"
 
 mail = Mail(app)
 
@@ -62,8 +67,9 @@ def get_user(user_id):
 @app.route('/')
 def index():
     try:
+        session.permanent = True
         alert = session["alert"]
-        session.pop("alert")
+        session.clear()
         return render_template('index.html', alert=alert)
     except KeyError:
         alert = None
@@ -81,11 +87,26 @@ def rooms():
 def booking():
     type_room = request.args.get('type_room')
     rooms = get_room(type_room=type_room)
-    return render_template('booking.html', rooms=rooms, capacity=2)
+    capacity = get_capacity(type_room)
+    session['capacity'] = capacity
+    session['type_room'] = type_room
+    return render_template('booking.html', rooms=rooms, capacity=capacity)
 
 
 @app.route('/booking2')
 def booking2():
+    session.permanent = True
+    check_in_str = request.args.get('checkInDate')
+    check_out_str = request.args.get('checkOutDate')
+    total_rooms = request.args.get('numRoom')
+
+    session['checkInDate'] = check_in_str
+    session['checkOutDate'] = check_out_str
+    total_days = utils.get_total_day(check_in_str, check_out_str)
+
+    total_price = int(total_rooms) * int(total_days) * float(get_price_of_room(session['type_room']))
+    session['total_price'] = int(total_price/23000)
+
     num_of_guests = request.args.get('numOfGuests')
     session["numOfGuests"] = num_of_guests
     return render_template('booking2.html', numOfGuests=num_of_guests)
@@ -93,25 +114,53 @@ def booking2():
 
 @app.route('/pay')
 def pay():
+    session.permanent = True
     email_payer = request.args.get("emailPayer")
-    session["email"] = email_payer
-    amount = 500
+    # fullNamePayer = request.args.get("fullNamePayer")
+    # cccdPayer = request.args.get("cccdPayer")
+    # addressPayer = request.args.get("addressPayer")
+    #
+    # BP = BookingPerson(name=fullNamePayer, cccd=cccdPayer, number=addressPayer, email=email_payer)
+    # db.session.add(BP)
+    # db.session.commit()
+    # db.session.flush()
+
+    # current_datetime = datetime.now()
+    # formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    # for i in range(int(session.get("numOfGuests"))):
+    #     fullname = request.args.get("fullName"+str(i+1))
+    #     CCCD = request.args.get("CCCD"+str(i+1))
+    #     Address = request.args.get("Address"+str(i+1))
+    #     latest_booking_person = models.BookingPerson.query.order_by(desc(models.BookingPerson.id)).first()
+    #     BF = models.BookingForm(booking_date=formatted_datetime, checkin_date=session.get("checkInDate"), checkout_date=session.get("checkOutDate"), booking_person_id=latest_booking_person)
+    #     db.session.add(BF)
+    #     db.session.commit()
+    #     db.session.flush()
+    #     latest_booking_form = models.BookingForm.query.order_by(desc(models.BookingForm.id)).first()
+    #     SP = models.StayingPerson(name=fullname, cccd=CCCD, address=Address, booking_form_id=latest_booking_form, kind_of_customer_id=session.get('type_room'))
+    #     db.session.add(SP)
+    #     db.session.commit()
+    #     db.session.flush()
+    #     RBF = models.room_booking_form(room_id=1, booking_form_id=latest_booking_form)
+    #     db.session.add(RBF)
+    #     db.session.commit()
+    #     db.session.flush()
+
+    session["emailPayer"] = email_payer
+    amount = session.get('total_price')
     description = "Thanh toán tiền phòng"
-
     paypalrestsdk.configure({
-        "mode": "sandbox",  # Chế độ sandbox hoặc live
-        "client_id": "AQenbzsSwZyIYheIAFCbetVGYxFgRF-OlqDlK7EpIQDb9IkVP1dFD84uRgDau6PpGVHp1JuYQSIyLjBa",
-        "client_secret": "EGiHbIMLHMQGzYuvpAbZZBf-2p-i6pfZk8eGZTGGw00VBb2WmHf9f_Tw8O3-I1WJADAPtLMlTjw5sivd"
+        "mode": "sandbox",
+        "client_id": "AUuRycD9hhAEFHgVmGIyhdyLd4GnW1WQ6DRqxugFsxX87k-pK8AehnwwjXmGwhmq8z4HIGLs78Qsa2bE",
+        "client_secret": "EJOz2UFyy63juDrPJ2jir8gowAxT9C35Zr5yeyHyk3XyLcT8gK8-T2C5ODERqXbDyoLXv2nfu0x3UGW7"
     })
-
-    # Tạo thanh toán PayPal
     payment = paypalrestsdk.Payment({
         "intent": "sale",
         "payer": {
             "payment_method": "paypal"
         },
         "redirect_urls": {
-            "return_url": "http://localhost:5000/payment-success",
+            "return_url": "http://localhost:5000/payment-success?pay=",
             "cancel_url": "http://localhost:5000/payment-cancel"
         },
         "transactions": [{
@@ -143,20 +192,19 @@ def pay():
 
 @app.route('/payment-success')
 def payment_success():
-    email_payer = session["email"]
-    if __name__ == "__main__":
-        print(email_payer)
-    if email_payer:  # Kiểm tra xem giá trị của email_payer có tồn tại hay không
-        # Gửi email với địa chỉ email_payer
-        utils.send_mail('Thông báo: Thanh toán thành công', 'Thanh toán của bạn đã được xác nhận thành công. Cảm ơn và hẹn gặp lại!', email_payer)
-        return render_template("index.html")
-    else:
-        return "Địa chỉ email không tồn tại."
+    email_payer = session.get("emailPayer")
+    if email_payer:
+        utils.send_mail('Notification: Payment successful',
+                        'Your payment has been successfully confirmed. Thank you and see you again!', email_payer)
+        session["alert"] = "1"
+    return redirect("/")
 
 
 @app.route('/payment-cancel')
 def payment_fail():
-    utils.send_mail('Thông báo: Thanh toán thất bại', 'Thanh toán của bạn đã được xác nhận thất. xin hãy thanh toán lại! cảm ơn', session.get("emailPayer"))
+    email_payer = request.args.get('pay')
+    utils.send_mail('Notification: Payment failed',
+                    'Your payment has been confirmed. Please pay again! Thanks', email_payer)
     return redirect('/pay')
 
 
