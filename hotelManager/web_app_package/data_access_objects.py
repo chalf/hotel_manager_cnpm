@@ -1,5 +1,5 @@
 from models import Customer, KindOfRoom, Bill, Room, Employee, StayingPerson, BookingForm, room_booking_form, \
-    BookingPerson
+    BookingPerson, SurchargeRate
 from web_app_package import db, app
 import hashlib
 from sqlalchemy import func, extract
@@ -124,6 +124,17 @@ def room_usage_report(month, year):
     return room_usage
 
 
+def get_surcharge():
+    r = SurchargeRate.query.filter_by(id=1).first()
+    return r.surcharge
+
+
+def add_bill(total_price, book_form_id):
+    b = Bill(total=total_price, surcharge_id=1, employee_id=3, booking_form_id=book_form_id)
+    db.session.add(b)
+    db.session.commit()
+
+
 def room_booking_stats_revenue_for_month_year(month, year):
     room_booking_info = db.session.query(Room.name, KindOfRoom.unit_price,
                                          func.count(BookingForm.id).label('booking_count'), func.sum(
@@ -217,6 +228,14 @@ def add_room_booking(room_id, booking_room_id):
     bf2.rooms.append(r3)
     db.session.add(bf2)
     db.session.commit()
+
+
+def count_total(day, rooms, people, surcharge, dongia):
+    result = (int(people) - (int(rooms) * 2))
+    if result < 0:
+        result = 0
+
+    return (day * rooms * dongia) + ((day * result * dongia) * surcharge)
 
 
 def get_id_room(name):

@@ -101,11 +101,13 @@ def booking2():
     session['checkOutDate'] = check_out_str
     total_days = utils.get_total_day(check_in_str, check_out_str)
 
-    total_price = int(total_rooms) * int(total_days) * float(get_price_of_room(session['type_room']))
-    session['total_price'] = int(total_price / 23000)
-
     num_of_guests = request.args.get('numOfGuests')
     session["numOfGuests"] = num_of_guests
+
+    total_price = data_access_objects.count_total(int(total_days), int(total_rooms), num_of_guests, data_access_objects.get_surcharge(), float(get_price_of_room(session['type_room'])))
+
+    session['total_price'] = int(total_price)
+
     return render_template('booking2.html', numOfGuests=num_of_guests)
 
 
@@ -118,7 +120,7 @@ def book_rooms():
     if __name__ == "__main__":
         print(session.get('rooms'))
     try:
-        a = 0
+        unactive_state_room(rooms)
     except:
         return jsonify({'status': 500, 'err_msg': 'Hệ thống đang có lỗi!'})
     else:
@@ -149,7 +151,8 @@ def pay():
     for r in rooms.strip().split(' '):
         room = get_id_room(r)
         add_room_booking(room.id, lf.id)
-    unactive_state_room(rooms)
+
+    data_access_objects.add_bill(amount, lf.id)
     session["emailPayer"] = email_payer
 
     description = "Thanh toán tiền phòng"
